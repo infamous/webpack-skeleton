@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "css-loader": "^0.9.0",
+    "famous": "^0.3.4",
+    "infamous": "infamous/infamous",
+    "style-loader": "^0.8.2",
+    "webpack": "^1.4.15"
+  }
+}
