@@ -48,17 +48,17 @@ scene.addChild(square)
 
 // Adding a DOMElement component to the Node creates a getter `domEl` on the
 // Node.
-node.addComponent(new DOMElement)
+square.addComponent(new DOMElement)
 
 // Leave the DOMElement API pure and let the user manipulate the DOM elements
 // directly? This might leave room for thrashing flaws in the code of our
 // end-users. What can we do aboue this? It'd be coo to completely abstract
 // away any opportunity for the user to create Motor-based code that is not
 // performant.
-node.domEl.el.style.backfaceVisibility = 'visible'
-node.domEl.el.style.background         = 'pink'
-node.domEl.el.style.padding            = '5px'
-node.domEl.el.style.border             = '2px solid #34fd34'
+square.domEl.el.style.backfaceVisibility = 'visible'
+square.domEl.el.style.background         = 'pink'
+square.domEl.el.style.padding            = '5px'
+square.domEl.el.style.border             = '2px solid #34fd34'
 
 // Components are static things. Then we have Drivers (or similarly named, any
 // ideas?) which are things that are not added to a node, but rather take a
@@ -72,17 +72,17 @@ node.domEl.el.style.border             = '2px solid #34fd34'
 // might contain calculations, but for that code to be easily placed into a
 // Worker?
 //
-// Hypothetical possibility about user code and web workers:
+// Hypothetical possibility:
 // The following Transition constructor takes a reference to a Node (we're in
 // the UI-thread), which it uses in order to be able to pass the WebWorker
 // instance of the Node into the currentValue function, which runs in the
 // worker of the Scene.
-let transition = new Transition(node)
-transition.go(0, 2*Math.PI, function(node, currentValue) {
+let squareTransition = new Transition(square)
+squareTransition.go(0, 2*Math.PI, function(square, currentValue) {
 
     // using the node's `.rotation` getter to get the rotation component and the
     // rotation component's `.y` setter.
-    node.rotation.y = currentValue +
+    square.rotation.y = currentValue +
         Math.random()*Math.PI/8 // some random mathematical calculation running in a worker.
 
 }, {
@@ -98,20 +98,38 @@ transition.go(0, 2*Math.PI, function(node, currentValue) {
     // serialized.
 }).loop()
 
-let transition = new Transition(node)
-node.state.someValue = 5
-transition.go(0, 2*Math.PI, function(node, currentValue) {
-    node.rotation.y = currentValue + node.state.someValue
-    node.state.someValue--
+let circle = new Node
+circle.size = [100, 100] // Change the default Size component's value.
+scene.addChild(circle)
+
+circle.addComponent(new DOMElement)
+circle.domEl.el.style.backfaceVisibility = 'visible'
+circle.domEl.el.borderRadius = "50px"
+circle.domEl.el.border = "2px solid blue"
+
+let circleTransition = new Transition(circle)
+// when setting state in the UI thread, it gets passed to a worker and arrives
+// into that worker at some random point in the future.
+circle.state.init('someValue', 5)
+circleTransition.go(0, 2*Math.PI, function(circle, currentValue) {
+    circle.rotation.y = currentValue + circle.state.someValue
+    circle.state.someValue--
 }, { duration: 5000, curve: Curve.expoInOut }).loop()
+
+let text = new Node
+text.size = [100, 200] // Change the default Size component's value.
+scene.addChild(text)
+
+text.addComponent(new DOMElement)
+text.domEl.el.textContent = "Hello Text."
 
 // Automatically usable event API. Behind the scenes (to save memory) `.on` is
 // a getter that sets up an eventing system only the first time it's used, and
 // returns a function. If `.on` is never called, then we can save memory and
 // CPU by not setting up the event system.
-node.domEl.on('drag', event => {
-    node.position.x = event.deltas[0]
-    node.position.y = event.deltas[1]
-    node.position.z = event.deltas[2]
+text.domEl.on('drag', event => {
+    text.position.x = event.deltas[0]
+    text.position.y = event.deltas[1]
+    text.position.z = event.deltas[2]
 })
 
