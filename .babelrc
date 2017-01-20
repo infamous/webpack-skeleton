@@ -1,0 +1,27 @@
+{
+    "env": {
+        "production": {
+            "presets": [
+                "babili", // minifier
+                ["latest", {
+                    "es2015": {"modules": false}
+                }]
+            ],
+
+            "plugins": [
+                "transform-runtime"
+            ],
+        },
+        "development": { // default
+            "presets": [
+                ["latest", {
+                    "es2015": {"modules": false}
+                }]
+            ],
+
+            "plugins": [
+                "transform-runtime"
+            ],
+        }
+    }
+}
