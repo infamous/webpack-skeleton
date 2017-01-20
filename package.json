@@ -1,5 +1,5 @@
 {
-  "name": "infamous-webpack-skeleton",
+  "name": "webpack-skeleton",
   "version": "0.0.0",
   "dependencies": {
     "babel-runtime": "^6.22.0",
